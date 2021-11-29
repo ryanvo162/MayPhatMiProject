@@ -5,7 +5,7 @@ import database from '../database/Firebase';
 
 import { ref, onValue } from "firebase/database";
 
-export default function InfomationScreen(navigation) {
+export default function InformationScreen({ navigation }) {
 
     const [getFullName, setFullName] = useState(null)
     const [getBirthday, setBirthday] = useState('')
@@ -50,12 +50,12 @@ export default function InfomationScreen(navigation) {
 
     return (
         <View style={styles.container}>
-            <ImageBackground style={styles.background} source={require('../image/bg.png')}>
-                <Image style={styles.logo} source={require('../image/logo.png')} />
+            <ImageBackground style={styles.background} source={require('../images/bg.png')}>
+                <Image style={styles.logo} source={require('../images/logo.png')} />
                 <Text style={styles.title}>Information</Text>
 
                 <View style={styles.cardInfo}>
-                    <Image style={styles.cardBackgroundImage} source={require('../image/cardInfo.png')} />
+                    <Image style={styles.cardBackgroundImage} source={require('../images/cardInfo.png')} />
                     <Image style={styles.avatar}
                         source={{ uri: getAvatar ? getAvatar : null }} />
                     <View style={styles.viewTextInfo}>
@@ -71,15 +71,19 @@ export default function InfomationScreen(navigation) {
                     </View>
                 </View>
                 <View style={styles.viewCups}>
-                    <Image style={[styles.noodlesCup, styles.cup1]} source={require('../image/ly1.png')} />
-                    <Image style={[styles.noodlesCup, styles.cup2]} source={require('../image/ly2.png')} />
-                    <Image style={[styles.noodlesCup, styles.cup3]} source={require('../image/ly3.png')} />
+                    <Image style={[styles.noodlesCup, styles.cup1]} source={require('../images/ly1.png')} />
+                    <Image style={[styles.noodlesCup, styles.cup2]} source={require('../images/ly2.png')} />
+                    <Image style={[styles.noodlesCup, styles.cup3]} source={require('../images/ly3.png')} />
                 </View>
 
                 {/* <Text></Text> */}
 
-                <Pressable style={styles.getButton}>
-                    <Image style={styles.getYourNoodles} source={require('../image/getYourNoodles.png')} />
+                <Pressable
+                    onPress={() => {
+                        navigation.navigate('Done')
+                    }}
+                    style={styles.getButton}>
+                    <Image style={styles.getYourNoodles} source={require('../images/getYourNoodles.png')} />
                 </Pressable>
             </ImageBackground>
         </View>

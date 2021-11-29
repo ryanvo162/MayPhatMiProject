@@ -1,32 +1,28 @@
 import React from 'react'
 import { StyleSheet, Text, ImageBackground, Image, View, Pressable } from 'react-native';
 
-export default function WelcomeScreen({ navigation }) {
+export default function ErrorScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <ImageBackground style={styles.background} source={require('../images/bg.png')}>
                 <Image style={styles.logo} source={require('../images/logo.png')} />
-                <Text style={styles.title}>Welcome</Text>
+                <Text style={styles.title}>Error</Text>
 
-                <View style={styles.clipContainer}>
-                    <View style={styles.white}></View>
-                    <View style={styles.yellow}></View>
-                    <Image style={styles.clip} source={require('../images/clip.png')} />
-                </View>
+                <Text style={styles.errNotif}>Can not recongnize your ID card.</Text>
 
+                <Image style={styles.tryagainNotif} source={require('../images/errNotif.png')} />
+                <Image style={styles.errorImage} source={require('../images/errorImage.png')} />
+                
                 <View style={styles.scanRequest}>
-                    <Image style={styles.scanIcon} source={require('../images/scanIcon.png')} />
+                    <Image style={styles.iconScan} source={require('../images/scanIcon.png')} />
                     <Text style={styles.scanText}>Follow the arrow to scan card</Text>
                 </View>
 
                 <Image style={styles.machine} source={require('../images/machine.png')} />
                 <Pressable
-                    onPress={() => {        
-                        navigation.navigate('Information')
-                    }}
                     style={{
                         position: 'absolute',
-                        bottom: 100,
+                        bottom: 100,  
                         right: 25,
                     }}>
                     <Image
@@ -60,55 +56,37 @@ const styles = StyleSheet.create({
         fontFamily: 'NexaFont',
         fontSize: 40,
         color: '#C71A1A',
-        marginBottom: 20,
+        marginBottom: 10,
     },
 
-    clipContainer: {
-        alignItems: 'center',
+    errNotif:{
+        fontFamily: 'NunitoExtraBold',
+        fontSize: 20,
+        color: '#AE0808',
+        marginBottom: 10,
     },
 
-    white: {
-        position: 'absolute',
-        backgroundColor: 'white',
-        height: 200,
-        width: "85%",
-        borderRadius: 20,
-        shadowColor: "#550A0A",
-        shadowOffset: {
-            width: -10,
-            height: 10,
-        },
-        shadowOpacity: 0.6,
-        shadowRadius: 5.46,
+    tryagainNotif: {
+        resizeMode: 'contain',
+        width: 150,
+        height: 50,
+        marginBottom:5,
     },
 
-    yellow: {
-        marginTop: 6,
-        position: 'absolute',
-        backgroundColor: '#FFC900',
-        height: 188,
-        width: "82%",
-        borderRadius: 20,
-        borderColor: '#711F1F',
-        borderWidth:1,
-    },
-
-    clip: {
-        marginTop: 12,
-        position: 'absolute',
-        height: 176,
-        width: "79%",
-        borderRadius: 15,
+    errorImage: {
+        resizeMode: 'contain',
+        width: 225,
+        height: 150,
+        marginBottom:10,
     },
 
     scanRequest: {
         position: 'relative',
-        top: 230,
         flexDirection: "row",
         alignItems: 'center',
     },
 
-    scanIcon: {
+    iconScan: {
         resizeMode: 'contain',
         height: 40,
         width: 60
