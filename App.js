@@ -27,7 +27,7 @@ export default function App() {
   return (
     
     <NavigationContainer style={styles.container}>
-      <Stack.Navigator initialRouteName="SoldOut" >
+      <Stack.Navigator initialRouteName="Welcome" >
         <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Information" component={InformationScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Done" component={DoneScreen} options={{ headerShown: false }} />       
