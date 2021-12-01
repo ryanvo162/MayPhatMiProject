@@ -26,7 +26,7 @@ export default function WelcomeScreen({ navigation }) {
     }, [])
 
     //Đổi ID ở đây để trải nghiệm
-    let id = 3
+    let id = 1
     return (
         <View style={styles.container}>
             <ImageBackground style={styles.background} source={require('../images/bg.png')}>
