@@ -20,12 +20,12 @@ export default function App() {
     NunitoExtraBold: require('./assets/fonts/Nunito-ExtraBold.ttf'),
     NunitoRegular: require('./assets/fonts/Nunito-Regular.ttf'),
     PaytoneOne: require('./assets/fonts/PaytoneOne-Regular.ttf'),
+    MPLUS1p: require('./assets/fonts/MPLUS1p-ExtraBold.ttf'),
   });
   if (!loaded) {
     return null;
   }
   return (
-    
     <NavigationContainer style={styles.container}>
       <Stack.Navigator initialRouteName="Welcome" >
         <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />

@@ -3,50 +3,102 @@ import { StyleSheet, Text, ImageBackground, Image, View, Pressable } from 'react
 
 import database from '../database/Firebase';
 
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, update } from "firebase/database";
+import ThreeCupAvailble from './view/ThreeCupAvailble';
+import TwoCupAvailble from './view/TwoCupAvailble';
+import OneCupAvailble from './view/OneCupAvailble';
+import NoAvailble from './view/NoAvailble';
 
-export default function InformationScreen({ navigation }) {
+export default function InformationScreen(props) {
 
-    const [getFullName, setFullName] = useState(null)
+    const { navigation, route: { params: { id } } } = props
+
+    let uid = id;
+    const [getFullName, setFullName] = useState('')
     const [getBirthday, setBirthday] = useState('')
     const [getAvatar, setAvatar] = useState('')
     const [getGender, setGender] = useState('')
     const [getDepartment, setDepartment] = useState('')
+    const [getNoodlesAvailable, setNoodlesAvailable] = useState(null)
 
     const db = database;
-    const refFullName = ref(db, 'Users/1/fullname');
-    const refBirthday = ref(db, 'Users/1/birthday');
-    const refDepartment = ref(db, 'Users/1/department');
-    const refGender = ref(db, 'Users/1/gender');
-    const refAvatar = ref(db, 'Users/1/avatar');
+
+    const refUser = ref(db, 'Users/' + uid);
 
     useEffect(async () => {
         try {
             await
-                onValue(refFullName, (snapshot) => {
+                onValue(refUser, (snapshot) => {
                     const data = snapshot.val();
-                    setFullName(data)
+                    if (data === null) {
+                        navigation.replace('Error')
+                    } else {
+                        setFullName(data.fullname)
+                        setBirthday(data.birthday)
+                        setDepartment(data.department)
+                        setGender(data.gender)
+                        setAvatar(data.avatar)
+                        setNoodlesAvailable(data.noodlesAvailable)
+                    }
                 });
-            onValue(refBirthday, (snapshot) => {
-                const data = snapshot.val();
-                setBirthday(data)
-            });
-            onValue(refDepartment, (snapshot) => {
-                const data = snapshot.val();
-                setDepartment(data)
-            });
-            onValue(refGender, (snapshot) => {
-                const data = snapshot.val();
-                setGender(data)
-            });
-            onValue(refAvatar, (snapshot) => {
-                const data = snapshot.val();
-                setAvatar(data)
-            });
         } catch (err) {
             console.log(err)
         }
     }, [])
+
+    const updateInfo = async () => {
+        const decreaseNoodlesAvailableUser = (getNoodlesAvailable - 1)
+
+        await update(refUser, {
+            noodlesAvailable: decreaseNoodlesAvailableUser,
+        }).then(() => {
+            console.log("Update success");
+            navigation.replace('Done')
+        }).catch((e) => {
+            console.log(e);
+        })
+    }
+
+    function AvailableCup() {
+        switch (getNoodlesAvailable) {
+            case 3: return <ThreeCupAvailble />
+            case 2: return <TwoCupAvailble />
+            case 1: return <OneCupAvailble />
+            case 0: return <NoAvailble />
+            default: return <ThreeCupAvailble />
+        }
+    }
+
+    function ButtonDone() {
+        if (getNoodlesAvailable > 0) {
+            return <GetYourNoodles />;
+        }
+        return <ComeBackNextMonth />;
+    }
+
+    function GetYourNoodles() {
+        return (
+            <Pressable
+                onPress={() => {
+                    updateInfo()
+                }}
+                style={styles.getButton}>
+                <Image style={styles.getYourNoodles} source={require('../images/getYourNoodles.png')} />
+            </Pressable>
+        )
+    }
+
+    function ComeBackNextMonth() {
+        return (
+            <Pressable
+                onPress={() => {
+                    navigation.replace('Welcome')
+                }}
+                style={styles.getButton}>
+                <Image style={styles.getYourNoodles} source={require('../images/comeBackNextMonth.png')} />
+            </Pressable>
+        )
+    }
 
     return (
         <View style={styles.container}>
@@ -70,21 +122,14 @@ export default function InformationScreen({ navigation }) {
                         <Text style={styles.department}>{getDepartment}</Text>
                     </View>
                 </View>
-                <View style={styles.viewCups}>
-                    <Image style={[styles.noodlesCup, styles.cup1]} source={require('../images/ly1.png')} />
-                    <Image style={[styles.noodlesCup, styles.cup2]} source={require('../images/ly2.png')} />
-                    <Image style={[styles.noodlesCup, styles.cup3]} source={require('../images/ly3.png')} />
+                <AvailableCup />
+
+                <View style={styles.notifAvailable}>
+                    <Text style={styles.noodlesAvailable}><Text style={styles.noodlesAvailableNumber}>{getNoodlesAvailable} </Text>
+                        cups of  noodles left this month</Text>
                 </View>
 
-                {/* <Text></Text> */}
-
-                <Pressable
-                    onPress={() => {
-                        navigation.navigate('Done')
-                    }}
-                    style={styles.getButton}>
-                    <Image style={styles.getYourNoodles} source={require('../images/getYourNoodles.png')} />
-                </Pressable>
+                <ButtonDone />
             </ImageBackground>
         </View>
     )
@@ -104,10 +149,12 @@ const styles = StyleSheet.create({
         marginTop: 65,
         marginBottom: 30,
         resizeMode: 'contain',
-        height: 100,
+        height: 85,
     },
 
     title: {
+        position: 'relative',
+        top: -15,
         fontFamily: 'NexaFont',
         fontSize: 40,
         color: '#C71A1A',
@@ -115,7 +162,7 @@ const styles = StyleSheet.create({
 
     cardInfo: {
         position: 'relative',
-        top: -15,
+        top: -35,
     },
 
     avatar: {
@@ -205,16 +252,21 @@ const styles = StyleSheet.create({
         color: '#880B0B'
     },
 
-    viewCups: {
+    notifAvailable: {
         position: 'relative',
-        top: -30,
-        flexDirection: "row",
+        top: -75,
     },
 
-    noodlesCup: {
-        resizeMode: 'contain',
-        height: 150,
-        width: 125
+    noodlesAvailableNumber: {
+        fontSize: 16,
+        fontFamily: 'PaytoneOne',
+        color: '#d91313',
+    },
+
+    noodlesAvailable: {
+        fontSize: 12,
+        fontFamily: 'PaytoneOne',
+        color: '#9c6666',
     },
 
     getButton: {

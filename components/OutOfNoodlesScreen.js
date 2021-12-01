@@ -1,7 +1,35 @@
-import React from 'react'
-import { StyleSheet, Text, ImageBackground, Image, View, Pressable } from 'react-native';
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, Text, ImageBackground, Image, View } from 'react-native';
+
+import database from '../database/Firebase';
+import { ref, onValue, update } from "firebase/database";
 
 export default function OutOfNoodlesScreen({ navigation }) {
+
+
+    const db = database;
+
+    const [getNoodlesMachine, setNoodlesMachine] = useState(null)
+
+    const refNoodlesMachine = ref(db, 'Machine');
+
+    useEffect(async () => {
+        try {
+            await
+                onValue(refNoodlesMachine, (snapshot) => {
+                    const data = snapshot.val();
+                    // console.log(data.noodles)
+                    if (data.noodles > 0) {
+                        navigation.replace('Welcome')
+                    } else {
+                        setNoodlesMachine(data.noodles)
+                    }
+                });
+        } catch (err) {
+            console.log(err)
+        }
+    }, [])
+
     return (
         <View style={styles.container}>
             <ImageBackground style={styles.background} source={require('../images/bg.png')}>
@@ -32,14 +60,15 @@ const styles = StyleSheet.create({
         marginTop: 65,
         marginBottom: 30,
         resizeMode: 'contain',
-        height: 90,
+        height: 85,
     },
 
     title: {
+        position: 'relative',
+        top: -15,
         fontFamily: 'NexaFont',
-        fontSize: 30,
+        fontSize: 32,
         color: '#C71A1A',
-        marginBottom: 10,
     },
 
     errNotif: {

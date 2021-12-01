@@ -1,7 +1,32 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { StyleSheet, Text, ImageBackground, Image, View, Pressable } from 'react-native';
 
+import database from '../database/Firebase';
+import { ref, onValue, update } from "firebase/database";
+
 export default function WelcomeScreen({ navigation }) {
+
+    const db = database;
+
+    const refNoodlesMachine = ref(db, 'Machine');
+
+    useEffect(async () => {
+        try {
+            await
+                onValue(refNoodlesMachine, (snapshot) => {
+                    const data = snapshot.val();
+                    // console.log(data.noodles)
+                    if (data.noodles <= 0) {
+                        navigation.replace('SoldOut')
+                    }
+                });
+        } catch (err) {
+            console.log(err)
+        }
+    }, [])
+
+    //Đổi ID ở đây để trải nghiệm
+    let id = 3
     return (
         <View style={styles.container}>
             <ImageBackground style={styles.background} source={require('../images/bg.png')}>
@@ -21,8 +46,8 @@ export default function WelcomeScreen({ navigation }) {
 
                 <Image style={styles.machine} source={require('../images/machine.png')} />
                 <Pressable
-                    onPress={() => {        
-                        navigation.navigate('Information')
+                    onPress={() => {
+                        navigation.replace('Information', { id: id })
                     }}
                     style={{
                         position: 'absolute',
@@ -53,14 +78,15 @@ const styles = StyleSheet.create({
         marginTop: 65,
         marginBottom: 30,
         resizeMode: 'contain',
-        height: 100,
+        height: 85,
     },
 
     title: {
+        position: 'relative',
+        top: -15,
         fontFamily: 'NexaFont',
         fontSize: 40,
         color: '#C71A1A',
-        marginBottom: 20,
     },
 
     clipContainer: {
@@ -90,7 +116,7 @@ const styles = StyleSheet.create({
         width: "82%",
         borderRadius: 20,
         borderColor: '#711F1F',
-        borderWidth:1,
+        borderWidth: 1,
     },
 
     clip: {
@@ -104,6 +130,7 @@ const styles = StyleSheet.create({
     scanRequest: {
         position: 'relative',
         top: 230,
+        right: 7,
         flexDirection: "row",
         alignItems: 'center',
     },

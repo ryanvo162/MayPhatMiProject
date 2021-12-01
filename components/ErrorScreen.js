@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, ImageBackground, Image, View, Pressable } from 'react-native';
 
 export default function ErrorScreen({ navigation }) {
+    let id = 1
     return (
         <View style={styles.container}>
             <ImageBackground style={styles.background} source={require('../images/bg.png')}>
@@ -12,7 +13,7 @@ export default function ErrorScreen({ navigation }) {
 
                 <Image style={styles.tryagainNotif} source={require('../images/errNotif.png')} />
                 <Image style={styles.errorImage} source={require('../images/errorImage.png')} />
-                
+
                 <View style={styles.scanRequest}>
                     <Image style={styles.iconScan} source={require('../images/scanIcon.png')} />
                     <Text style={styles.scanText}>Follow the arrow to scan card</Text>
@@ -20,9 +21,12 @@ export default function ErrorScreen({ navigation }) {
 
                 <Image style={styles.machine} source={require('../images/machine.png')} />
                 <Pressable
+                    onPress={() => {
+                        navigation.replace('Information', { id: id })
+                    }}
                     style={{
                         position: 'absolute',
-                        bottom: 100,  
+                        bottom: 100,
                         right: 25,
                     }}>
                     <Image
@@ -49,17 +53,18 @@ const styles = StyleSheet.create({
         marginTop: 65,
         marginBottom: 30,
         resizeMode: 'contain',
-        height: 100,
+        height: 85,
     },
 
     title: {
+        position: 'relative',
+        top: -15,
         fontFamily: 'NexaFont',
         fontSize: 40,
         color: '#C71A1A',
-        marginBottom: 10,
     },
 
-    errNotif:{
+    errNotif: {
         fontFamily: 'NunitoExtraBold',
         fontSize: 20,
         color: '#AE0808',
@@ -70,14 +75,14 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         width: 150,
         height: 50,
-        marginBottom:5,
+        marginBottom: 5,
     },
 
     errorImage: {
         resizeMode: 'contain',
         width: 225,
         height: 150,
-        marginBottom:10,
+        marginBottom: 10,
     },
 
     scanRequest: {
