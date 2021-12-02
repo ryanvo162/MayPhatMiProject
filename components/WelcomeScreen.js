@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, ImageBackground, Image, View, Pressable, Button } from 'react-native';
+import { StyleSheet, Text, ImageBackground, Image, View, Pressable } from 'react-native';
 
 import database from '../database/Firebase';
-import { ref, onValue, update } from "firebase/database";
+import { ref, onValue } from "firebase/database";
 
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
@@ -11,13 +11,15 @@ export default function WelcomeScreen({ navigation }) {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
 
+    const db = database;
+    const refNoodlesMachine = ref(db, 'Machine');
+
     useEffect(() => {
         (async () => {
             try {
                 await
                     onValue(refNoodlesMachine, (snapshot) => {
                         const data = snapshot.val();
-                        // console.log(data.noodles)
                         if (data.noodles <= 0) {
                             navigation.replace('SoldOut')
                         }
@@ -45,12 +47,6 @@ export default function WelcomeScreen({ navigation }) {
         return <Text>No access to camera</Text>;
     }
 
-    const db = database;
-
-    const refNoodlesMachine = ref(db, 'Machine');
-
-    //Đổi ID ở đây để trải nghiệm
-    let id = 1
     return (
         <View style={styles.container}>
             <ImageBackground style={styles.background} source={require('../images/bg.png')}>

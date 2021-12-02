@@ -18,7 +18,6 @@ export default function OutOfNoodlesScreen({ navigation }) {
             await
                 onValue(refNoodlesMachine, (snapshot) => {
                     const data = snapshot.val();
-                    // console.log(data.noodles)
                     if (data.noodles > 0) {
                         navigation.replace('Welcome')
                     } else {
