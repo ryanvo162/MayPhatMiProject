@@ -13,21 +13,23 @@ export default function DoneScreen({ navigation }) {
 
     const refNoodlesMachine = ref(db, 'Machine');
 
-    useEffect(async () => {
-        try {
-            await
-                onValue(refNoodlesMachine, (snapshot) => {
-                    const data = snapshot.val();
-                    // console.log(data.noodles)
-                    if (data.noodles <= 0) {
-                        console.log('Out Of Noodles')
-                    } else {
-                        setNoodlesMachine(data.noodles)
-                    }
-                });
-        } catch (err) {
-            console.log(err)
-        }
+    useEffect(() => {
+        (async () => {
+            try {
+                await
+                    onValue(refNoodlesMachine, (snapshot) => {
+                        const data = snapshot.val();
+                        // console.log(data.noodles)
+                        if (data.noodles <= 0) {
+                            console.log('Out Of Noodles')
+                        } else {
+                            setNoodlesMachine(data.noodles)
+                        }
+                    });
+            } catch (err) {
+                console.log(err)
+            }
+        })();
     }, [])
 
     const updateInfo = async () => {

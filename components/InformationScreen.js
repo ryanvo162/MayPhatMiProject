@@ -25,25 +25,27 @@ export default function InformationScreen(props) {
 
     const refUser = ref(db, 'Users/' + uid);
 
-    useEffect(async () => {
-        try {
-            await
-                onValue(refUser, (snapshot) => {
-                    const data = snapshot.val();
-                    if (data === null) {
-                        navigation.replace('Error')
-                    } else {
-                        setFullName(data.fullname)
-                        setBirthday(data.birthday)
-                        setDepartment(data.department)
-                        setGender(data.gender)
-                        setAvatar(data.avatar)
-                        setNoodlesAvailable(data.noodlesAvailable)
-                    }
-                });
-        } catch (err) {
-            console.log(err)
-        }
+    useEffect(() => {
+        (async () => {
+            try {
+                await
+                    onValue(refUser, (snapshot) => {
+                        const data = snapshot.val();
+                        if (data === null) {
+                            navigation.replace('Error')
+                        } else {
+                            setFullName(data.fullname)
+                            setBirthday(data.birthday)
+                            setDepartment(data.department)
+                            setGender(data.gender)
+                            setAvatar(data.avatar)
+                            setNoodlesAvailable(data.noodlesAvailable)
+                        }
+                    });
+            } catch (err) {
+                console.log(err)
+            }
+        })();
     }, [])
 
     const updateInfo = async () => {

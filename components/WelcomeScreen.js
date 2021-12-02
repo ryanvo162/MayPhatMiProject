@@ -1,29 +1,53 @@
-import React, { useEffect } from 'react'
-import { StyleSheet, Text, ImageBackground, Image, View, Pressable } from 'react-native';
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, ImageBackground, Image, View, Pressable, Button } from 'react-native';
 
 import database from '../database/Firebase';
 import { ref, onValue, update } from "firebase/database";
 
+import { BarCodeScanner } from 'expo-barcode-scanner';
+
 export default function WelcomeScreen({ navigation }) {
+
+    const [hasPermission, setHasPermission] = useState(null);
+    const [scanned, setScanned] = useState(false);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                await
+                    onValue(refNoodlesMachine, (snapshot) => {
+                        const data = snapshot.val();
+                        // console.log(data.noodles)
+                        if (data.noodles <= 0) {
+                            navigation.replace('SoldOut')
+                        }
+                    });
+            } catch (err) {
+                console.log(err)
+            }
+        })();
+        (async () => {
+            const { status } = await BarCodeScanner.requestPermissionsAsync();
+            setHasPermission(status === 'granted');
+        })();
+    }, []);
+
+    const handleBarCodeScanned = ({ type, data }) => {
+        setScanned(true);
+        // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+        navigation.replace('Information', { id: data })
+    };
+
+    if (hasPermission === null) {
+        return <Text>Requesting for camera permission</Text>;
+    }
+    if (hasPermission === false) {
+        return <Text>No access to camera</Text>;
+    }
 
     const db = database;
 
     const refNoodlesMachine = ref(db, 'Machine');
-
-    useEffect(async () => {
-        try {
-            await
-                onValue(refNoodlesMachine, (snapshot) => {
-                    const data = snapshot.val();
-                    // console.log(data.noodles)
-                    if (data.noodles <= 0) {
-                        navigation.replace('SoldOut')
-                    }
-                });
-        } catch (err) {
-            console.log(err)
-        }
-    }, [])
 
     //Đổi ID ở đây để trải nghiệm
     let id = 1
@@ -36,7 +60,13 @@ export default function WelcomeScreen({ navigation }) {
                 <View style={styles.clipContainer}>
                     <View style={styles.white}></View>
                     <View style={styles.yellow}></View>
-                    <Image style={styles.clip} source={require('../images/clip.png')} />
+                    {/* <Image style={styles.clip} source={require('../images/clip.png')} /> */}
+                    <BarCodeScanner
+                        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                        style={styles.clip}
+                    />
+                    {scanned && <Pressable style={styles.tryAgainPress} onPress={() => setScanned(false)}>
+                        <Text style={styles.tryAgainText}>Tap to scan again</Text></Pressable>}
                 </View>
 
                 <View style={styles.scanRequest}>
@@ -123,8 +153,24 @@ const styles = StyleSheet.create({
         marginTop: 12,
         position: 'absolute',
         height: 176,
-        width: "79%",
+        width: "75%",
         borderRadius: 15,
+    },
+
+    tryAgainPress: {
+        position: 'absolute',
+        top: 85,
+        backgroundColor: 'rgba(158, 158, 158, 0.3)',
+        borderRadius: 5,
+        height: 20,
+        width: 150,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    tryAgainText: {
+        color: 'white'
+
     },
 
     scanRequest: {
